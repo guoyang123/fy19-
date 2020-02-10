@@ -3,7 +3,7 @@ import apple.laf.JRSUIUtils;
 /**
  *
  * ¶þ²æÊ÷
- * 
+ *
  * */
 public class BinaryTree {
 
