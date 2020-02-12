@@ -1,85 +1,64 @@
 package com.neuedu.controller;
 
+import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.dao.UserMapper;
 import com.neuedu.pojo.User;
+import com.neuedu.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import javax.servlet.http.HttpSession;
+
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
 
-
     @Autowired
-    UserMapper userMapper;
-    @Value("${user.username}")
-    private  String username;
-
+    IUserService userService;
 
     /**
-     * 访问id=1的用户信息
-     *
-     * http://xxx:8080/user?id=1
+     * 注册
      * */
 
-    @RequestMapping(value = {"/user","/info"})
-    @ResponseBody
-    public User findUserById(@RequestParam("id") Integer userid){
+    @RequestMapping("register.do")
+    public ServerResponse register(User user){
 
-        User user=new User();
+        return userService.registerLogic(user);
+    }
 
-        user.setId(userid);
-        user.setUsername(username);
+    /**
+     * 登录接口
+     * */
+    @RequestMapping("login.do")
+    public  ServerResponse login(String username,String password,HttpSession session){
+        ServerResponse response=userService.loginLogic(username, password);
 
-        return user;
+        if(response.isSucess()){
+            //登录成功
+            session.setAttribute(Consts.USER,response.getData());
+        }
+
+
+        return response;
 
     }
 
     /**
-     * 访问id=1的用户信息
-     *
-     * http://xxx:8080/user/1/zhangsan
+     * 退出登录接口
      * */
 
-    @RequestMapping("/user/{id}/{username}")
-    @ResponseBody
-    public  User findUserById2(@PathVariable("id")  Integer userid,
-                               @PathVariable("username") String username){
-        User user=new User();
+    @RequestMapping("logout.do")
+    public ServerResponse logout(HttpSession session){
 
-        user.setId(userid);
-        user.setUsername(username);
+        session.removeAttribute(Consts.USER);
 
-        return user;
+        return ServerResponse.serverResponseBySucess();
 
     }
-
-
-
-    /**
-     *
-     * 测试mybatis
-     * */
-
-    @RequestMapping("/mybatis/{userid}")
-    @ResponseBody
-    public ServerResponse findUser(@PathVariable("userid") int userid){
-
-
-       User user= userMapper.selectByPrimaryKey(userid);
-
-       if(user!=null){
-         return  ServerResponse.serverResponseBySucess(null,user);
-       }
-
-
-       return ServerResponse.serverResponseByFail(1,"id不存在");
-    }
-
 
 
 }
