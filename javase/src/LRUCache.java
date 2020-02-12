@@ -7,7 +7,7 @@ public class LRUCache {
 
     private  int  capacity;
     private HashMap<Integer,DoubleNode> map;
-   private  DoubleLinkedList list;
+    private  DoubleLinkedList list;
 
 
     /**

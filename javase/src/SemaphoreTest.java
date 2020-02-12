@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SemaphoreTest {
 
    //初始化信号量
-    Semaphore s=new Semaphore(1);
+    Semaphore s=new Semaphore(1,true);
 
     private int  value;
 
