@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -25,7 +27,7 @@ public class UserController {
      * */
 
     @RequestMapping("register.do")
-    public ServerResponse register(User user){
+    public ServerResponse register(User user, HttpServletRequest request,HttpServletResponse response){
 
         return userService.registerLogic(user);
     }

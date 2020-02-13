@@ -5,6 +5,10 @@ package com.neuedu.common;
  * */
 public enum StatusEnum {
 
+
+    NO_LOGIN(100,"未登录"),
+    NO_AUTHORITY(101,"无权限操作"),
+
     PARAM_NOT_EMPTY(1,"参数不能为空"),
     USERNAME_NOT_EMPTY(2,"用户名不能为空"),
     EMAIL_NOT_EMPTY(3,"邮箱不能为空"),
@@ -18,6 +22,13 @@ public enum StatusEnum {
     REGISTER_FAIL(10,"注册失败"),
     USERNAME_NOT_EXISTS(11,"用户名不存在"),
     PASSWORD_INCORRENT(12,"密码错误"),
+    CATEGORY_NAME_NOT_EMPTY(13,"类别名称不能为空"),
+    CATEGORY_INSERT_FAIL(14,"类别添加失败"),
+    CATEGORYID_NOT_EMPTY(15,"类别ID不能为空"),
+    CATEGORY_NOT_EXISTS(16,"类别不存在"),
+    CATEGORY_UPDATE_FAIL(17,"类别修改失败"),
+
+
     ;
 
 
