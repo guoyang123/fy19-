@@ -43,8 +43,6 @@ public class UserController {
             //登录成功
             session.setAttribute(Consts.USER,response.getData());
         }
-
-
         return response;
 
     }

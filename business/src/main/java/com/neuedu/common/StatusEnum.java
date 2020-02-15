@@ -28,6 +28,10 @@ public enum StatusEnum {
     CATEGORY_NOT_EXISTS(16,"类别不存在"),
     CATEGORY_UPDATE_FAIL(17,"类别修改失败"),
 
+    UPLOAD_FILENAME_NOT_EMPTY(18,"上传的文件名不能为空"),
+    PRODUCT_ADD_FAIL(19,"商品添加失败"),
+    UPDATE_PRODUCT_NOT_EXISTS(20,"更新的商品不存在"),
+    PRODUCT_UPDATE_FAIL(21,"商品更新失败"),
 
     ;
 

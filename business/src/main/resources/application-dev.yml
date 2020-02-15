@@ -21,3 +21,8 @@ mybatis:
 
 user:
   username: root
+
+upload:
+  path: /Users/guoyang/Documents/upload
+
+
