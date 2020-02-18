@@ -1,7 +1,11 @@
 package com.neuedu.pojo;
 
+import com.neuedu.annotation.Description;
+
 import java.util.Date;
 
+
+@Description(desc = "i am person",author = "neuedu",age = 20)
 public class User {
     /**
      *

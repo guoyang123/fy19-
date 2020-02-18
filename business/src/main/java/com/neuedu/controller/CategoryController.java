@@ -28,6 +28,7 @@ public class CategoryController {
      * */
 
     @RequestMapping("add_category.do")
+
     public ServerResponse addCategory(@RequestParam(value = "parentId",required = false,defaultValue = "0") Integer parentId,
                                       @RequestParam("categoryName") String categoryName,
                                       HttpSession session){

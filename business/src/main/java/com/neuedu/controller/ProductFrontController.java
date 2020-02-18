@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+
 @RestController
 @RequestMapping("/product/")
 public class ProductFrontController {
@@ -20,7 +23,7 @@ public class ProductFrontController {
      * @param keyword 关键字
      * @param pageNum 第几页
      * @param pageSize 一页多少条数据
-     * @orderBy 按照字段排序
+     * @orderBy 按照字段排序 fieldname_desc/filedname_asc
      * */
 
     @RequestMapping("list.do")
@@ -33,7 +36,17 @@ public class ProductFrontController {
 
 
 
+
         return productService.list(categoryId, keyword, pageNum, pageSize, orderBy);
     }
+
+
+    @RequestMapping("detail.do")
+    public ServerResponse detail(Integer productId){
+
+
+        return  productService.detail(productId);
+    }
+
 
 }

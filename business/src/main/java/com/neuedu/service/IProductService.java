@@ -14,4 +14,9 @@ public interface IProductService {
 
     ServerResponse list(Integer categoryId, String keyword, Integer pageNum, Integer pageSize, String orderBy);
 
+
+    /**
+     * 前台-查看详情
+     * */
+    ServerResponse detail(Integer productId);
 }

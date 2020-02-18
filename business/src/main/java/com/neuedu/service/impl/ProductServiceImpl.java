@@ -3,12 +3,16 @@ package com.neuedu.service.impl;
 import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
 import com.neuedu.dao.ProductMapper;
 import com.neuedu.pojo.Product;
 import com.neuedu.service.ICategoryService;
 import com.neuedu.service.IProductService;
+import com.neuedu.utils.DateUtils;
+import com.neuedu.vo.ProductDetailVO;
+import com.neuedu.vo.ProductListVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -129,14 +133,35 @@ public class ProductServiceImpl implements IProductService {
 
         //一定写在查询前面
         PageHelper.startPage(pageNum,pageSize);
+
+        // fieldname_desc
+        if(orderBy!=null&&!orderBy.equals("")){//传递排序参数
+            String[] orders=orderBy.split("_");
+            PageHelper.orderBy(orders[0]+" "+orders[1]);
+
+        }
+
         //
 
        List<Product> productList=productMapper.findProducsByCategoryIdsAndkeyword(categoryList,keyword);
 
+       List<ProductListVO> productListVOList=new ArrayList<>();
+       for(Product product:productList){
+           ProductListVO productListVO=new ProductListVO();
+           productListVO.setId(product.getId());
+           productListVO.setCategoryId(product.getCategoryId());
+           productListVO.setMainImage(product.getMainImage());
+           productListVO.setName(product.getName());
+           productListVO.setPrice(product.getPrice());
+           productListVO.setStatus(product.getStatus());
+           productListVO.setSubtitle(product.getSubtitle());
+           productListVOList.add(productListVO);
+       }
+
 
 
        //构建分页模型
-       PageInfo pageInfo=new PageInfo(productList);
+       PageInfo pageInfo=new PageInfo(productListVOList);
 
 
 
@@ -144,4 +169,48 @@ public class ProductServiceImpl implements IProductService {
 
         return ServerResponse.serverResponseBySucess("",pageInfo);
     }
+
+    @Override
+    public ServerResponse detail(Integer productId) {
+
+      if(productId==null){
+          return ServerResponse.serverResponseByFail(StatusEnum.PARAM_NOT_EMPTY.getStatus(),StatusEnum.PARAM_NOT_EMPTY.getDesc());
+      }
+
+    Product product=  productMapper.selectByPrimaryKey(productId);
+
+      if(product.getStatus()!=Consts.ProductStatusEnum.PRODUCT_ONLINE.getStatus()){
+          //商品已经下架或者被删除了
+          return ServerResponse.serverResponseByFail(StatusEnum.PRODUCT_OFFLINEORDELETE_FAIL.getStatus(),StatusEnum.PRODUCT_OFFLINEORDELETE_FAIL.getDesc());
+
+      }
+
+
+
+
+        ProductDetailVO productDetailVO=product2vo(product);
+
+        return ServerResponse.serverResponseBySucess(null,productDetailVO);
+    }
+
+
+    private ProductDetailVO product2vo(Product product){
+        ProductDetailVO vo=new ProductDetailVO();
+
+        vo.setCategoryId(product.getCategoryId());
+        vo.setCreateTime(DateUtils.date2Str(product.getCreateTime()));
+        vo.setDetail(product.getDetail());
+        vo.setId(product.getId());
+        vo.setMainImage(product.getMainImage());
+        vo.setName(product.getName());
+        vo.setPrice(product.getPrice());
+        vo.setStatus(product.getStatus());
+        vo.setSubImages(product.getSubImages());
+        vo.setSubtitle(product.getSubtitle());
+        vo.setUpdateTime(DateUtils.date2Str(product.getUpdateTime()));
+
+        return vo;
+
+    }
+
 }
