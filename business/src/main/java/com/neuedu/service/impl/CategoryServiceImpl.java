@@ -88,6 +88,9 @@ public class CategoryServiceImpl implements ICategoryService {
         if(categoryId==null){
             return ServerResponse.serverResponseByFail(StatusEnum.CATEGORYID_NOT_EMPTY.getStatus(),StatusEnum.CATEGORYID_NOT_EMPTY.getDesc());
         }
+
+        
+
         List<Category> categoryList= categoryMapper.getSubCategorysById(categoryId);
         return ServerResponse.serverResponseBySucess(null,categoryList);
 

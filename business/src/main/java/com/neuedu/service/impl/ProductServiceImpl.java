@@ -179,6 +179,10 @@ public class ProductServiceImpl implements IProductService {
 
     Product product=  productMapper.selectByPrimaryKey(productId);
 
+      if(product==null){
+          return ServerResponse.serverResponseByFail(StatusEnum.PRODUCT_NOT_EXISTS.getStatus(),StatusEnum.PRODUCT_NOT_EXISTS.getDesc());
+      }
+
       if(product.getStatus()!=Consts.ProductStatusEnum.PRODUCT_ONLINE.getStatus()){
           //商品已经下架或者被删除了
           return ServerResponse.serverResponseByFail(StatusEnum.PRODUCT_OFFLINEORDELETE_FAIL.getStatus(),StatusEnum.PRODUCT_OFFLINEORDELETE_FAIL.getDesc());
@@ -208,6 +212,7 @@ public class ProductServiceImpl implements IProductService {
         vo.setSubImages(product.getSubImages());
         vo.setSubtitle(product.getSubtitle());
         vo.setUpdateTime(DateUtils.date2Str(product.getUpdateTime()));
+        vo.setStock(product.getStock());
 
         return vo;
 
