@@ -87,6 +87,8 @@ public class ProductServiceImpl implements IProductService {
 
 
 
+
+
         //step1:判断是否传递了categoryId和keyword
         if(categoryId==-1&& (keyword==null||keyword.equals(""))){
             //前端没有传递categoryId和Keyword,往前端返回空的数据

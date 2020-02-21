@@ -22,6 +22,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ServerResponse addCategory(Integer parentId, String categoryName) {
 
+
      //参数非空校验
 
         //类别名非空判断
@@ -89,7 +90,7 @@ public class CategoryServiceImpl implements ICategoryService {
             return ServerResponse.serverResponseByFail(StatusEnum.CATEGORYID_NOT_EMPTY.getStatus(),StatusEnum.CATEGORYID_NOT_EMPTY.getDesc());
         }
 
-        
+
 
         List<Category> categoryList= categoryMapper.getSubCategorysById(categoryId);
         return ServerResponse.serverResponseBySucess(null,categoryList);
