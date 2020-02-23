@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPubSub;
 
 import java.util.List;
 import java.util.Map;
@@ -200,7 +201,38 @@ public class RedisApi {
 
 
 
+    /**
+     * 发布消息
+     * */
 
+    public void pub(String channel,String message){
+
+       Jedis jedis= jedisPool.getResource();
+       System.out.println("  >>> fabu(PUBLISH) > Channel:"+channel+" > fa chu de Message:"+message);
+       jedis.publish(channel, message);
+       jedis.close();
+    }
+
+    /**
+     * 订阅消息
+     * */
+
+    public void subscribe(JedisPubSub listener,String channel){
+        Jedis jedis= jedisPool.getResource();
+        jedis.subscribe(listener,channel);
+        jedis.close();
+    }
+
+    /**
+     * 取消订阅消息
+     * */
+
+    public void unsubscribe(JedisPubSub listener,String channel){
+        Jedis jedis= jedisPool.getResource();
+        System.out.println("  >>> qu xiao ding yue(UNSUBSCRIBE) > Channel:"+channel);
+        listener.unsubscribe(channel);
+        jedis.close();
+    }
 
 
 

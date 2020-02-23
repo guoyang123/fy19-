@@ -39,5 +39,6 @@ redis:
   redisPort: 6379
   redisPassword: Qinfo20180507
   timeout: 1000
+  kvstore: kvstore
 
 
