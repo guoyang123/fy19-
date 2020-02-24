@@ -63,4 +63,10 @@ public interface ProductMapper {
                                                       @Param("keyword")String keyword);
 
 
+    /**
+     * 商品扣库存接口
+     * */
+    int  reduceStock(@Param("productId")Integer productId,@Param("stock") Integer stock);
+
+
 }
