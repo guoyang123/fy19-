@@ -49,6 +49,12 @@ public enum StatusEnum {
     ORDER_ITEM_CREATE_FAIL(30,"订单明细创建失败"),
     REDUCE_STOCK_FAIL(31,"商品扣库存失败"),
     CART_CLEAN_FAIL(32,"购物车清空失败"),
+    ORDER_NOT_EXISTS(33,"订单不存在"),
+    ORDER_NOT_CANCEL(34,"订单无法取消"),
+    ORDER_CANCEL_FAIL(35,"订单取消失败"),
+    ADDRESS_ADD_FAIL(36,"地址添加失败"),
+
+    ALIPAY_ORDER_FAIL(37,"支付宝预下单失败"),
     ;
 
 

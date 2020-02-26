@@ -49,4 +49,6 @@ public interface OrderItemMapper {
     int updateByPrimaryKey(OrderItem record);
 
 
+    List<OrderItem> findOrderItemsByOrderNo(@Param("orderNo") Long orderNo);
+
 }

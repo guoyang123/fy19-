@@ -11,4 +11,14 @@ public interface IOrderService {
 
     ServerResponse createOrder(Integer userId,Integer shippingId);
 
+    /**
+     *
+     * 取消订单
+     * */
+    ServerResponse cancelOrder(Long orderNo);
+
+    /**
+     * 根据订单号查询订单信息
+     * */
+    ServerResponse findOrderByOrderNo(Long orderNo);
 }

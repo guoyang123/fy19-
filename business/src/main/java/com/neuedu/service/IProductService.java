@@ -21,7 +21,9 @@ public interface IProductService {
     ServerResponse detail(Integer productId);
     /**
      * 商品扣库存
+     * type: 0 ->减quantity库存
+     *       1->加quantity库存
      * */
-    ServerResponse reduceStocke(Integer productId,Integer quantity);
+    ServerResponse updateStock(Integer productId,Integer quantity,int type);
 
 }

@@ -93,9 +93,7 @@ public class ProductController {
 
         //step1:先判断用户是否登录
         User user=(User)session.getAttribute(Consts.USER);
-        if(user==null){//未登录
-            return ServerResponse.serverResponseByFail(StatusEnum.NO_LOGIN.getStatus(),StatusEnum.NO_LOGIN.getDesc());
-        }
+
 
         //step2:只有管理员权限才能添加类别
         if(user.getRole()!=RoleEnum.ADMIN.getRole()){//无管理员权限

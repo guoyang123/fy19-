@@ -27,9 +27,7 @@ public class CartController {
 
         //step1:先判断用户是否登录
         User user=(User)session.getAttribute(Consts.USER);
-        if(user==null){//未登录
-            return ServerResponse.serverResponseByFail(StatusEnum.NO_LOGIN.getStatus(),StatusEnum.NO_LOGIN.getDesc());
-        }
+
 
         //step2:
 
@@ -44,9 +42,6 @@ public class CartController {
 
         //step1:先判断用户是否登录
         User user=(User)session.getAttribute(Consts.USER);
-        if(user==null){//未登录
-            return ServerResponse.serverResponseByFail(StatusEnum.NO_LOGIN.getStatus(),StatusEnum.NO_LOGIN.getDesc());
-        }
 
         return cartService.add(user.getId(),productId,count);
 

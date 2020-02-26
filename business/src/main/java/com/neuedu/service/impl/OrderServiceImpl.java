@@ -20,6 +20,7 @@ import com.neuedu.vo.ProductDetailVO;
 import org.apache.catalina.Server;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.jws.Oneway;
@@ -110,6 +111,8 @@ public class OrderServiceImpl implements IOrderService {
         return ServerResponse.serverResponseBySucess(null,orderVO);
     }
 
+
+
     public OrderVO assembleOrderVO(Order order,List<OrderItem> orderItemList,Integer shippingId){
         OrderVO orderVO=new OrderVO();
 
@@ -187,7 +190,7 @@ public class OrderServiceImpl implements IOrderService {
             Integer productId=orderItem.getProductId();
             Integer quantity=orderItem.getQuantity();
             //根据商品id扣库存
-            ServerResponse serverResponse=iProductService.reduceStocke(productId,quantity);
+            ServerResponse serverResponse=iProductService.updateStock(productId,quantity,0);
             if(!serverResponse.isSucess()){
                 return serverResponse;
             }
@@ -278,6 +281,86 @@ public class OrderServiceImpl implements IOrderService {
 
 
         return ServerResponse.serverResponseBySucess(null,orderItemList);
+    }
+
+
+    @Override
+    public ServerResponse cancelOrder(Long orderNo) {
+
+        //1.参数校验
+        if(orderNo==null){
+            return ServerResponse.serverResponseByFail(StatusEnum.PARAM_NOT_EMPTY.getStatus(),StatusEnum.PARAM_NOT_EMPTY.getDesc());
+        }
+
+        //2.根据订单号查询订单是否存在
+
+       Order order= orderMapper.findOrderByOrderNo(orderNo);
+
+        if(order==null){//订单不存在
+            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_NOT_EXISTS.getStatus(),StatusEnum.ORDER_NOT_EXISTS.getDesc());
+        }
+        //只有未付款的订单才能取消
+        if(order.getStatus()!=Consts.OrderStatusEnum.UNPAY.getStatus()){
+
+            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_NOT_CANCEL.getStatus(),StatusEnum.ORDER_NOT_CANCEL.getDesc());
+        }
+
+        //取消订单
+        order.setStatus(Consts.OrderStatusEnum.CANCELED.getStatus());
+        int count=orderMapper.updateByPrimaryKey(order);
+
+        if(count<=0){
+            //订单取消失败
+            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_CANCEL_FAIL.getStatus(),StatusEnum.ORDER_CANCEL_FAIL.getDesc());
+        }
+
+
+        //更新库存
+        List<OrderItem> orderItemLst=orderItemMapper.findOrderItemsByOrderNo(orderNo);
+
+        for(OrderItem orderItem:orderItemLst){
+           Integer quantity= orderItem.getQuantity();
+           Integer productId=orderItem.getProductId();
+
+           ServerResponse response=iProductService.updateStock(productId,quantity,1);
+
+           if(!response.isSucess()){
+               return ServerResponse.serverResponseByFail(StatusEnum.REDUCE_STOCK_FAIL.getStatus(),StatusEnum.REDUCE_STOCK_FAIL.getDesc());
+           }
+        }
+
+
+        return ServerResponse.serverResponseBySucess();
+    }
+
+    @Override
+    public ServerResponse findOrderByOrderNo(Long orderNo) {
+
+        //step1:参数非空判断
+        if(orderNo==null){
+            return ServerResponse.serverResponseByFail(StatusEnum.PARAM_NOT_EMPTY.getStatus(),StatusEnum.PARAM_NOT_EMPTY.getDesc());
+        }
+
+        //step2:根据订单号查询订单
+        Order order=orderMapper.findOrderByOrderNo(orderNo);
+        if(order==null){
+            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_NOT_EXISTS.getStatus(),StatusEnum.ORDER_NOT_EXISTS.getDesc());
+        }
+        List<OrderItem> orderItemList=orderItemMapper.findOrderItemsByOrderNo(orderNo);
+
+
+        OrderVO orderVO=assembleOrderVO(order,orderItemList,order.getShippingId());
+
+
+        return ServerResponse.serverResponseBySucess(null,orderVO);
+    }
+
+
+    //每隔2s钟执行一次
+   // @Scheduled(cron = "0/2 * * * * ?")
+    public  void  closeOrder(){
+
+        System.out.println("=========closeOrder=======");
     }
 
 }
