@@ -23,8 +23,11 @@ import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.service.impl.AlipayTradeWithHBServiceImpl;
 import com.alipay.demo.trade.utils.Utils;
 import com.alipay.demo.trade.utils.ZxingUtils;
+import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
+import com.neuedu.dao.PayInfoMapper;
+import com.neuedu.pojo.PayInfo;
 import com.neuedu.service.IOrderService;
 import com.neuedu.service.IpayService;
 import com.neuedu.vo.OrderItemVO;
@@ -33,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -410,7 +414,7 @@ public class PayServiceImpl implements IpayService {
                 .setUndiscountableAmount(undiscountableAmount).setSellerId(sellerId).setBody(body)
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
                 .setTimeoutExpress(timeoutExpress)
-                //                .setNotifyUrl("http://www.test-notify-url.com")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
+                .setNotifyUrl(callbackurl)//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
                 .setGoodsDetailList(goodsDetailList);
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
         switch (result.getTradeStatus()) {
@@ -421,8 +425,8 @@ public class PayServiceImpl implements IpayService {
                 dumpResponse(response);
 
                 // 需要修改为运行机器上的路径
-                String filePath = String.format("/Users/guoyang/Documents/qr-%s.png",
-                        response.getOutTradeNo());
+                String filePath = String.format(qrcodePath+"qr-%s.png",
+                    response.getOutTradeNo());
                 log.info("filePath:" + filePath);
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);
 
@@ -446,6 +450,12 @@ public class PayServiceImpl implements IpayService {
     @Autowired
     IOrderService orderService;
 
+    @Value("${alipay.callback.url}")
+    String callbackurl;
+    @Value("${alipay.qrcode.path}")
+    String qrcodePath;
+    @Autowired
+    PayInfoMapper payInfoMapper;
     @Override
     public ServerResponse pay(Long orderNo) {
 
@@ -469,5 +479,54 @@ public class PayServiceImpl implements IpayService {
         return trade_precreate(orderVO);
 
 
+    }
+
+    @Override
+    public String callbackLogic(Map<String, String> signParam) {
+
+
+        //step1:获取商家的订单号
+        Long orderNo=Long.parseLong(signParam.get("out_trade_no"));
+        //step2:根据订单号查询订单
+        ServerResponse<OrderVO> serverResponse=orderService.findOrderByOrderNo(orderNo);
+        if(!serverResponse.isSucess()){
+            return "fail";
+        }
+
+       OrderVO orderVO= serverResponse.getData();
+
+        if(orderVO.getStatus()>= Consts.OrderStatusEnum.PAYED.getStatus()){
+            //支付宝回调接口已经修改过订单状态了
+            return "success";
+        }
+
+        //step3:修改订单状态
+        String tradeStatus=signParam.get("trade_status");
+        if(tradeStatus.equals("TRADE_SUCCESS")){//订单支付成功
+            //修改订单状态、修改订单支付时间
+
+            ServerResponse serverResponse1=orderService.updateOrder(orderNo,signParam.get("gmt_payment"),20);
+
+            if(!serverResponse1.isSucess()){
+                return "fail";
+            }
+        }
+
+        //step4:支付信息插入支付表
+        PayInfo payInfo=new PayInfo();
+
+        payInfo.setUserId(orderVO.getUserId());
+        payInfo.setPlatformNumber(signParam.get("trade_no"));
+        payInfo.setPayPlatform(1);
+        payInfo.setOrderNo(orderVO.getOrderNo());
+        payInfo.setPlatformStatus(signParam.get("trade_status"));
+
+        int count=payInfoMapper.insert(payInfo);
+
+        if(count<=0){
+            return "fail";
+        }
+
+        return "success";
     }
 }

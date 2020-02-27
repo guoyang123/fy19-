@@ -1,8 +1,10 @@
 package com.neuedu.dao;
 
+import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.Order;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderMapper {
@@ -48,4 +50,7 @@ public interface OrderMapper {
 
 
     Order findOrderByOrderNo(@Param("orderNo") Long orderNo);
+
+    int updateOrder(@Param("orderNo")Long orderNo,
+                                     @Param("payTime") Date payTime,@Param("status") Integer orderStatus);
 }

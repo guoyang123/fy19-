@@ -55,6 +55,7 @@ public enum StatusEnum {
     ADDRESS_ADD_FAIL(36,"地址添加失败"),
 
     ALIPAY_ORDER_FAIL(37,"支付宝预下单失败"),
+    ORDER_STATUS_FAIL(38,"订单状态修改失败"),
     ;
 
 

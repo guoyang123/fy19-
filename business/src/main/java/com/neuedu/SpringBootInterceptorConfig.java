@@ -32,6 +32,7 @@ public class SpringBootInterceptorConfig implements WebMvcConfigurer {
         excludePath.add("/user/register.do");
         excludePath.add("/user/forget_get_question.do");
         excludePath.add("/manage/user/login.do");
+        excludePath.add("/order/alipay_callback.do");
 
 
         registry.addInterceptor(loginCheckInterceptor). //注册拦截器

@@ -108,7 +108,7 @@ public class OrderServiceImpl implements IOrderService {
         }
 
 
-        System.out.println(1/0);
+
         //6.减商品库存
         reduceSotck(orderItemList);
 
@@ -131,6 +131,7 @@ public class OrderServiceImpl implements IOrderService {
     public OrderVO assembleOrderVO(Order order,List<OrderItem> orderItemList,Integer shippingId){
         OrderVO orderVO=new OrderVO();
 
+        orderVO.setUserId(order.getUserId());
         orderVO.setOrderNo(order.getOrderNo());
         orderVO.setPayment(order.getPayment());
         orderVO.setPaymentType(order.getPaymentType());
@@ -369,6 +370,23 @@ public class OrderServiceImpl implements IOrderService {
 
 
         return ServerResponse.serverResponseBySucess(null,orderVO);
+    }
+
+    @Override
+    public ServerResponse updateOrder(Long orderNo, String payTime, Integer orderStatus) {
+
+        if(orderNo==null||payTime==null||orderStatus==null){
+            return ServerResponse.serverResponseByFail(StatusEnum.PARAM_NOT_EMPTY.getStatus(),StatusEnum.PARAM_NOT_EMPTY.getDesc());
+        }
+
+
+        int count=orderMapper.updateOrder(orderNo,DateUtils.str2Date(payTime),orderStatus);
+
+        if(count<=0){
+            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_STATUS_FAIL.getStatus(),StatusEnum.ORDER_STATUS_FAIL.getDesc());
+        }
+
+         return ServerResponse.serverResponseBySucess();
     }
 
 
