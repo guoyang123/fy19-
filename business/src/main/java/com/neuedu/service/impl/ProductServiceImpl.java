@@ -7,6 +7,7 @@ import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
 import com.neuedu.dao.ProductMapper;
+import com.neuedu.exception.BusinessException;
 import com.neuedu.pojo.Product;
 import com.neuedu.service.ICategoryService;
 import com.neuedu.service.IProductService;
@@ -15,6 +16,8 @@ import com.neuedu.vo.ProductDetailVO;
 import com.neuedu.vo.ProductListVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -199,6 +202,8 @@ public class ProductServiceImpl implements IProductService {
         return ServerResponse.serverResponseBySucess(null,productDetailVO);
     }
 
+
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public ServerResponse updateStock(Integer productId, Integer quantity,int type) {
 
@@ -213,8 +218,11 @@ public class ProductServiceImpl implements IProductService {
             return ServerResponse.serverResponseByFail(StatusEnum.PRODUCT_NOT_EXISTS.getStatus(),StatusEnum.PRODUCT_NOT_EXISTS.getDesc());
         }
         int count=productMapper.reduceStock(productId,type==0?product.getStock()-quantity:product.getStock()+quantity);
+
+//System.out.println(1/0);
+
         if(count<=0){
-            return  ServerResponse.serverResponseByFail(StatusEnum.REDUCE_STOCK_FAIL.getStatus(),StatusEnum.REDUCE_STOCK_FAIL.getDesc());
+            throw new BusinessException(StatusEnum.REDUCE_STOCK_FAIL.getStatus(),StatusEnum.REDUCE_STOCK_FAIL.getDesc());
         }
 
         return ServerResponse.serverResponseBySucess();

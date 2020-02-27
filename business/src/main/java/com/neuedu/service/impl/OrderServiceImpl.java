@@ -6,6 +6,7 @@ import com.neuedu.common.StatusEnum;
 import com.neuedu.dao.CartMapper;
 import com.neuedu.dao.OrderItemMapper;
 import com.neuedu.dao.OrderMapper;
+import com.neuedu.exception.BusinessException;
 import com.neuedu.pojo.Cart;
 import com.neuedu.pojo.Order;
 import com.neuedu.pojo.OrderItem;
@@ -22,9 +23,17 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.Oneway;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +53,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     OrderItemMapper orderItemMapper;
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ,timeout = 10,readOnly =false,rollbackFor = {BusinessException.class},
+     propagation = Propagation.REQUIRED
+    )
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
 
@@ -88,12 +100,15 @@ public class OrderServiceImpl implements IOrderService {
         }
 
 
+
         int count=orderItemMapper.insertBatch(orderItemList);
 
-        if(count<=0){
-            return ServerResponse.serverResponseByFail(StatusEnum.ORDER_ITEM_CREATE_FAIL.getStatus(),StatusEnum.ORDER_ITEM_CREATE_FAIL.getDesc());
+        if(count!=orderItemList.size()){
+            throw new BusinessException(StatusEnum.ORDER_ITEM_CREATE_FAIL.getStatus(),StatusEnum.ORDER_ITEM_CREATE_FAIL.getDesc());
         }
 
+
+        System.out.println(1/0);
         //6.减商品库存
         reduceSotck(orderItemList);
 
@@ -184,6 +199,7 @@ public class OrderServiceImpl implements IOrderService {
      * 扣库存
      * */
 
+
     private  ServerResponse reduceSotck(List<OrderItem> orderItemList){
 
         for(OrderItem orderItem:orderItemList){
@@ -216,7 +232,7 @@ public class OrderServiceImpl implements IOrderService {
        int count= orderMapper.insert(order);
 
        if(count<=0){
-           ServerResponse.serverResponseByFail(StatusEnum.ORDER_CREATE_FAIL.getStatus(),StatusEnum.ORDER_CREATE_FAIL.getDesc());
+          throw new BusinessException(StatusEnum.ORDER_CREATE_FAIL.getStatus(),StatusEnum.ORDER_CREATE_FAIL.getDesc());
        }
         return ServerResponse.serverResponseBySucess(null,order);
     }

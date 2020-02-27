@@ -5,6 +5,7 @@ import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
 import com.neuedu.dao.CartMapper;
 import com.neuedu.dao.ProductMapper;
+import com.neuedu.exception.BusinessException;
 import com.neuedu.pojo.Cart;
 import com.neuedu.service.ICartService;
 import com.neuedu.service.IProductService;
@@ -117,8 +118,8 @@ public class CartServiceImpl implements ICartService {
        }
 
         int count=cartMapper.deleteBatch(cartList);
-       if(count<=0){
-           return ServerResponse.serverResponseByFail(StatusEnum.CART_CLEAN_FAIL.getStatus(),StatusEnum.CART_CLEAN_FAIL.getDesc());
+       if(count!=cartList.size()){
+           throw new BusinessException(StatusEnum.CART_CLEAN_FAIL.getStatus(),StatusEnum.CART_CLEAN_FAIL.getDesc());
        }
 
         return ServerResponse.serverResponseBySucess();
