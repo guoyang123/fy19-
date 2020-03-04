@@ -56,6 +56,13 @@ public enum StatusEnum {
 
     ALIPAY_ORDER_FAIL(37,"支付宝预下单失败"),
     ORDER_STATUS_FAIL(38,"订单状态修改失败"),
+
+    TOKEN_GENERATE_FAIL(39,"token获取失败"),
+
+    TOKEN_EMPTY(40,"没有携带token"),
+    NOT_REPEATABLE(41,"不能重复提交"),
+
+    FILE_UPLOAD_FTPSERVER_FAIL(42,"上传到ftp服务器失败"),
     ;
 
 

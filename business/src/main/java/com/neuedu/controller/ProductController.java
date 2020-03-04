@@ -7,6 +7,7 @@ import com.neuedu.common.StatusEnum;
 import com.neuedu.pojo.Product;
 import com.neuedu.pojo.User;
 import com.neuedu.service.IProductService;
+import com.neuedu.utils.FTPService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -29,6 +32,9 @@ public class ProductController {
     @Value("${upload.path}")
     private String upladPath;
 
+
+    @Autowired
+    FTPService ftpService;
 
     @RequestMapping(value = "/upload",method = RequestMethod.GET)
     public String upload( ){
@@ -77,6 +83,27 @@ public class ProductController {
             //6.将文件写入到磁盘
             file.transferTo(newFile);
 
+            //把file上传到ftp服务器
+
+            List<File> list=new ArrayList<>();
+
+            list.add(newFile);
+
+            //如果上传到ftp服务器失败，应该retry,设置retry=3
+            int retry=3;
+            boolean result=false;
+            while(retry-->0){
+                result=ftpService.uploadFile("qrcode",list);
+                if(result){
+                    break;
+                }
+            }
+           if(!result){
+               //文件上传失败
+               return ServerResponse.serverResponseByFail(StatusEnum.FILE_UPLOAD_FTPSERVER_FAIL.getStatus(),StatusEnum.FILE_UPLOAD_FTPSERVER_FAIL.getDesc());
+           }
+           //将本地文件删除
+            newFile.delete();
             //返回前端
             return ServerResponse.serverResponseBySucess(null,newFilename);
         } catch (IOException e) {

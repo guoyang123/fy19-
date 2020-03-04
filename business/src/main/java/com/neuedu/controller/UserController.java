@@ -14,6 +14,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
+
+
+
+/**
+ *
+ * 进程间通讯：
+ *
+ * 1）文件
+ * 2)signal，信号
+ * 发信号
+ * A ->B 发信号，信号就是数字。
+ * kill  -9 pid
+ *
+ * 3) 消息队列
+ * 4）管道
+ *5) 共享内存
+ * 6)同步机制，比如信号量
+ * 7）socket套接字
+ *    Netty
+ *    dobbe
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * */
+
+
 @RestController
 @RequestMapping("/user")
 public class UserController {

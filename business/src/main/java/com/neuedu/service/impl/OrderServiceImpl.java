@@ -1,5 +1,6 @@
 package com.neuedu.service.impl;
 
+import com.neuedu.annotation.AutoIdempontent;
 import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
@@ -56,6 +57,8 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional(isolation = Isolation.REPEATABLE_READ,timeout = 10,readOnly =false,rollbackFor = {BusinessException.class},
      propagation = Propagation.REQUIRED
     )
+
+
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
 

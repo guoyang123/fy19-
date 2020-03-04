@@ -23,7 +23,7 @@ user:
   username: root
 
 upload:
-  path: /Users/guoyang/Documents/upload
+  path: D:\\ftpfile\\
 
 
 redis:
@@ -49,4 +49,19 @@ alipay:
   public:
     key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv13O9pnPMfcP9ZgjiPRjxIcEpd/dEXU0qZU3++jrd5ItZIhTvmH9PuIylN4jxeY4qcaf/OVaQ074qd2xl0LDEDh9TA8ZNBwXEVROkDAhOsi6V7emjRCJrlkY0a9XvmPjoxKZ3K2y/laxtktoSw1xY3sXQl9v/rQnlsqSds7Ye9mGLAOvNUAQ/zyaCckjdRYcL3OARaHF/05grc1Q4Y3RvP8MD9F11TuSYRtgi34/m1tVqESRr7OKt3TFL6Zt1bxtri26bc3dzWKIE7C41L2gKZApmNEDzQAzsMJx5hH7YfVUxTc1CgvfTXvYaob7j3hZp3fKan+wBsw9IX1MwxIxxwIDAQAB
 
+
+#ftp:
+#  ip: 47.94.155.74
+#  user: neuedu
+#  pass: Qinfo20180507
+#  port: 21
+
+token:
+  timeout: 10
+
+
+ftp:
+  host: 47.94.155.74
+  user: ftpuser
+  pass: Qinfo20180507@
 

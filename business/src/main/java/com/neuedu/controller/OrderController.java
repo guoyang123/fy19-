@@ -1,5 +1,6 @@
 package com.neuedu.controller;
 
+import com.neuedu.annotation.AutoIdempontent;
 import com.neuedu.common.Consts;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.common.StatusEnum;
@@ -17,6 +18,8 @@ public class OrderController {
 
     @Autowired
     IOrderService orderService;
+
+     @AutoIdempontent
     @RequestMapping("create.do")
     public ServerResponse create(Integer shippingId, HttpSession session){
 

@@ -1,5 +1,6 @@
 package com.neuedu;
 
+import com.neuedu.ininterceptor.AutoIdempontentInterceptor;
 import com.neuedu.ininterceptor.LoginCheckInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -16,11 +17,17 @@ public class SpringBootInterceptorConfig implements WebMvcConfigurer {
     @Autowired
     LoginCheckInterceptor loginCheckInterceptor;
 
+    @Autowired
+    AutoIdempontentInterceptor autoIdempontentInterceptor;
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        List<String> loginPath=new ArrayList<>();
 
+
+        registry.addInterceptor(autoIdempontentInterceptor);
+
+        List<String> loginPath=new ArrayList<>();
         loginPath.add("/manage/**");
         loginPath.add("/user/**");
         loginPath.add("/cart/**");
@@ -32,6 +39,7 @@ public class SpringBootInterceptorConfig implements WebMvcConfigurer {
         excludePath.add("/user/register.do");
         excludePath.add("/user/forget_get_question.do");
         excludePath.add("/manage/user/login.do");
+        excludePath.add("/manage/product/upload");
         excludePath.add("/order/alipay_callback.do");
 
 
