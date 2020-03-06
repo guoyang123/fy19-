@@ -8,13 +8,13 @@ public class FTPUtils {
 
 
     private static  final  String FTPIP="47.94.155.74";
-    private static  final  String FTPUSER="ftpneuedu";
-    private static  final  String FTPPASSWORD="Qinfo20180507";
+    private static  final  String FTPUSER="newuser";
+    private static  final  String FTPPASSWORD="Qinfo20180507@";
 
 
     private  String  ftpIp;
-    private String  ftpUser;
-    private  String ftpPass;
+    private  String  ftpUser;
+    private  String  ftpPass;
     private  Integer port;
 
     public FTPUtils(String ftpIp, String ftpUser, String ftpPass, Integer port) {
